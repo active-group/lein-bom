@@ -4,7 +4,8 @@ A Leiningen plugin to collect dependencies in the fantasy format called BOM.
 
 ## Usage
 
-Check out this repository and run:
+Check out this repository and, from within the root directory of this project,
+run:
 
     $ lein install
 
