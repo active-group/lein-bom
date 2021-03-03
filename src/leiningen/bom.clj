@@ -110,7 +110,7 @@
 ;; - artifact-version
 ;; - licenses
 ;; - sources (a link to the source code will suffice)
-(s/def ::string (s/and string? (comp not empty?)))
+(s/def ::string (s/and string? not-empty))
 (s/def ::artifact-id ::string)
 (s/def ::artifact-version ::string)
 
@@ -140,6 +140,41 @@
          (get-with-tag :version)
          (first))))
 
+;; https://github.com/package-url/purl-spec
+;; Schema: scheme:type/namespace/name@version?qualifiers#subpath
+
+;; this is the URL scheme with the constant value of "pkg".
+(s/def ::purl-scheme #{"pkg"})
+;; the package "type" or package "protocol" such as maven, npm, nuget, gem, pypi, etc. Required.
+(s/def ::purl-type ::string)
+;; some name prefix such as a Maven groupid, a Docker image owner, a GitHub user or organization. Optional and type-specific.
+(s/def ::purl-namespace ::string)
+;; the name of the package. Required.
+(s/def ::purl-name ::string)
+;; the version of the package. Optional.
+(s/def ::purl-version ::string)
+;; extra qualifying data for a package such as an OS, architecture, a distro, etc. Optional and type-specific.
+(s/def ::purl-qualifiers (s/map-of keyword? any?))  ; pairs like {:repository_url "gcr.io"}
+;; extra subpath within a package, relative to the package root. Optional.
+(s/def ::purl-subpath ::string)
+
+(s/def ::purl (s/keys :req-un [::purl-scheme ::purl-type ::purl-namespace ::purl-name]
+                      :opt-un [::purl-version ::purl-qualifiers ::purl-subpath]))
+
+(s/fdef make-purl
+  :args (s/cat :group-id ::purl-namespace :artifact-id ::purl-name :version ::purl-version)
+  :ret ::purl)
+(defn make-purl
+  [group-id artifact-id version]
+  (let [purl-scheme    "pkg"   ; constant according to spec
+        purl-type      "maven" ; constant in our specific case
+        purl-namespace group-id
+        purl-name      artifact-id
+        purl-version   version
+        purl-qualifiers {}
+        purl-subpath nil]
+    (str purl-scheme ":" purl-type "/" purl-namespace "/" purl-name "@" purl-version)))
+
 (defn pom->bom
   [pom]
   (letfn [(elems->vec [[a b]]
@@ -156,20 +191,32 @@
                                      (get-tag-value-content :licenses)
                                      (filter map?)
                                      (get-tag-value-content :license)
-                                     (filter map?))]
-      {:origin "external"
-
-       :artifactId (first (get-tag-value-content :artifactId content))
-       :namespace  (first (get-tag-value-content :groupId content))
-       :version    (first (get-tag-value-content :version content))
-       :url        (first (get-tag-value-content :url content))
-       :licenses   {:main {:name (first (get-tag-value-content :name license))
-                           :url  (first (get-tag-value-content :url license))}}
-       :usageType "COMPONENT_DYNAMIC_LIBRARY"})))
+                                     (filter map?))
+          artifact-id           (first (get-tag-value-content :artifactId content))
+          group-id              (first (get-tag-value-content :groupId content))
+          group-id              (or group-id artifact-id)
+          project-url           (first (get-tag-value-content :url content))
+          version               (first (get-tag-value-content :version content))]
+      {:origin           "external"
+       :directDependency true
+       :usageType        "COMPONENT_DYNAMIC_LIBRARY"
+       :artifactId       artifact-id
+       ;; NOTE Some package do not specify a group-id. Maven convention tells us
+       ;;      to use the artifact-id in these cases.
+       :namespace        group-id
+       :purl             (make-purl group-id artifact-id version)
+       :sources          {:combined {:absolutePath project-url}} ; TODO
+       :version          version
+       :licenses         {:main [{:name (first (get-tag-value-content :name license))
+                                  :url  (first (get-tag-value-content :url license))}]}
+       :repoUrl          project-url
+       :description      (first (get-tag-value-content :description content))})))
 
 (defn bom
   [project & _]
   (let [[local-repo tree] (make-dependency-tree project)
         tree              (into {} tree)
         paths+poms        (dependencies->paths+poms local-repo tree)]
-    (spit "bom.json" (with-out-str (pprint/pprint (json/pprint (mapv pom->bom paths+poms) :escape-slash false))))))
+    (spit "bom.json" (with-out-str (json/pprint
+                                    {:entries (mapv pom->bom paths+poms)}
+                                    :escape-slash false)))))
