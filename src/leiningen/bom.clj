@@ -96,12 +96,21 @@
           pom
           (println "Cannot find" (string/join "/" [base-dir pom-2]) "at alternative path either. Skipping."))))))
 
+(defn include?
+  "Decide whether or not to include a dependency in the output based on the set
+  actual direct dependencies and a set of ignored artifact ids."
+  [dependency direct-dependencies ignore]
+  (boolean (and (contains? direct-dependencies dependency)
+                (not (contains? ignore dependency)))))
+
 (defn dependencies->paths+poms
-  [base-dir deps]
+  [base-dir deps direct-dependencies ignore]
   (reduce (fn [acc [top-level transitive]]
-            (concat acc
-                    [(dependency->path+pom base-dir top-level)]
-                    (dependencies->paths+poms base-dir transitive)))
+            (if (include? (first top-level) direct-dependencies ignore)
+              (concat acc
+                      [(dependency->path+pom base-dir top-level)]
+                      (dependencies->paths+poms base-dir transitive direct-dependencies ignore))
+              acc))
           [] deps))
 
 ;;   What do we want from our dependencies?
@@ -213,10 +222,13 @@
        :description      (first (get-tag-value-content :description content))})))
 
 (defn bom
-  [project & _]
-  (let [[local-repo tree] (make-dependency-tree project)
-        tree              (into {} tree)
-        paths+poms        (dependencies->paths+poms local-repo tree)]
+  [project & args]
+  ;; Args contains symbols we'd like to ignore
+  (let [[local-repo tree]   (make-dependency-tree project)
+        direct-dependencies (into #{} (map first (:dependencies project)))
+        ignore              (into #{} (mapv symbol args))
+        tree                (into {} tree)
+        paths+poms          (dependencies->paths+poms local-repo tree direct-dependencies ignore)]
     (spit "bom.json" (with-out-str (json/pprint
                                     {:entries (mapv pom->bom paths+poms)}
                                     :escape-slash false)))))
