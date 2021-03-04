@@ -185,8 +185,6 @@
        (mapv (fn [^java.io.File file] (.getPath file)))
        (into #{})))
 
-(collect-all-poms "/Users/schneider/.m2/repository")
-
 (def ignore-default #{'org.clojure/clojure})
 
 (defn bom
