@@ -58,31 +58,12 @@
   [deps all-poms ignore]
   (reduce (fn [acc [top-level transitive]]
             (if (contains? ignore (first top-level))
-              ;; still check for the children
-              (concat acc
-                      (dependencies->poms transitive all-poms ignore))
+              ;; If we ignore the top-level, ignore it's children as well.
+              acc
               (concat acc
                       [(match-pom top-level all-poms)]
                       (dependencies->poms transitive all-poms ignore))))
           [] deps))
-
-;;   What do we want from our dependencies?
-;; - group-id
-;; - artifact-id
-;; - artifact-version
-;; - licenses
-;; - sources (a link to the source code will suffice)
-(s/def ::string (s/and string? not-empty))
-(s/def ::artifact-id ::string)
-(s/def ::artifact-version ::string)
-
-(s/def ::name ::string)
-(s/def ::url ::string)
-
-(s/def ::license (s/keys :req-un [::name ::url]))
-(s/def ::licenses (s/coll-of ::license))
-(s/def ::bom (s/keys :req-un [::artifact-id ::artifact-version ::licenses ::sources]
-                     :opt-in [::group-id]))
 
 ;; https://github.com/package-url/purl-spec
 ;; Schema: scheme:type/namespace/name@version?qualifiers#subpath
