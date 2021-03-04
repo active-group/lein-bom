@@ -199,7 +199,7 @@
         all-poms            (collect-all-poms local-repo)
         poms                (->> (dependencies->poms tree all-poms ignore)
                                  (mapv (comp xml/parse-str slurp)))
-        boms                (-> (mapv pom->bom poms)
-                                (sort-by :artifactId))]
+        boms                (->> (mapv pom->bom poms)
+                                 (sort-by :artifactId))]
     (spit "bom.json" (with-out-str (json/pprint {:entries boms} :escape-slash false)))
     (println "Final package count:" (count boms))))
