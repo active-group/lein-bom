@@ -55,20 +55,25 @@
     (first (filter (fn [pom] (string/ends-with? pom dep-s)) all-poms))))
 
 (defn dependencies->poms
-  [deps all-poms ignore]
+  [deps direct-dependencies all-poms ignore]
   (reduce (fn [acc [top-level transitive]]
             (if (contains? ignore (first top-level))
               ;; If we ignore the top-level, ignore it's children as well.
               acc
               (concat acc
-                      [(match-pom top-level all-poms)]
-                      (dependencies->poms transitive all-poms ignore))))
+                      [[(contains? direct-dependencies (first top-level))
+                        (match-pom top-level all-poms)]]
+                      (dependencies->poms transitive
+                                          direct-dependencies
+                                          all-poms
+                                          ignore))))
           [] deps))
 
 ;; https://github.com/package-url/purl-spec
 ;; Schema: scheme:type/namespace/name@version?qualifiers#subpath
 
 ;; this is the URL scheme with the constant value of "pkg".
+(s/def ::string (s/and string? not-empty))
 (s/def ::purl-scheme #{"pkg"})
 ;; the package "type" or package "protocol" such as maven, npm, nuget, gem, pypi, etc. Required.
 (s/def ::purl-type ::string)
@@ -113,7 +118,7 @@
         nil))))
 
 (defn pom->bom
-  [pom]
+  [[direct-dependency? pom]]
   (letfn [(elems->vec [[a b]]
             (let [[a b] (if (= :name (:tag a)) [a b] [b a])]
               [(first (:content a)) (first (:content b))]))]
@@ -139,7 +144,7 @@
                                      (get-tag-value-content :connection)
                                      first)]
       (->> {:origin           "external"
-            :directDependency true
+            :directDependency direct-dependency?
             :usageType        "COMPONENT_DYNAMIC_LIBRARY"
             :artifactId       artifact-id
             ;; NOTE Some package do not specify a group-id. Maven convention tells us
@@ -176,8 +181,9 @@
         ignore              (into ignore-default (mapv symbol args))
         tree                (into {} tree)
         all-poms            (collect-all-poms local-repo)
-        poms                (->> (dependencies->poms tree all-poms ignore)
-                                 (mapv (comp xml/parse-str slurp)))
+        poms                (->> (dependencies->poms tree direct-dependencies all-poms ignore)
+                                 (mapv (fn [[direct-dependency? pom]]
+                                         [direct-dependency? (-> pom slurp xml/parse-str)])))
         boms                (->> (mapv pom->bom poms)
                                  (sort-by :artifactId))]
     (spit "bom.json" (with-out-str (json/pprint {:entries boms} :escape-slash false)))
