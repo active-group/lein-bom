@@ -44,73 +44,26 @@
                   :coordinates (:dependencies project)
                   :transfer-listener :stdout))]))
 
-(defn coordinate->package-name
-  [coordinate]
-  (last (string/split coordinate #"\/")))
+(defn dep->pom-name
+  [[dep version & more]]
+  (let [dep* (str (last (string/split (str dep) #"/")))]
+    (str dep* "-" version ".pom")))
 
-(defn coordinate-without-group-id?
-  [coordinate]
-  (= 1 (count (string/split (pr-str coordinate) #"\.|\/"))))
+(defn match-pom
+  [dep all-poms]
+  (let [dep-s (dep->pom-name dep)]
+    (first (filter (fn [pom] (string/ends-with? pom dep-s)) all-poms))))
 
-(defn path+pom->pom
-  [[path pom]]
-  (let [pom-path (string/join "/" [path pom])]
-    (try (->  pom-path slurp xml/parse-str)
-         (catch Exception _
-           nil))))
-
-(defn pom-location-alternatives
-  [coordinate version]
-  (let [with-group?            (coordinate-without-group-id? coordinate)
-        [group-id artifact-id] (string/split (pr-str coordinate) #"\/")
-        artifact-id            (or artifact-id group-id)
-        group-id               (string/replace group-id #"\." "/")
-        artifact-id-2          (string/replace artifact-id #"\." "/")
-        suffix                 (str artifact-id "-" version ".pom")]
-    [(string/join "/" [group-id artifact-id version suffix])
-     (string/join "/" [group-id artifact-id-2 version suffix])]))
-
-(defn dependency->path+pom
-  [base-dir [coordinate version & more]]
-  ;; Unfortunately, some packages don't followg the convention of separating subpackages into directories.
-  ;; So we check two different options:
-  ;; 1. Check if the conventional path is present
-  ;; 2. If not, try the package name without separating it with /.
-  (let [[pom-1 pom-2] (pom-location-alternatives coordinate version)
-        ;; base-path     (string/join "/" (concat [base-dir] (when (coordinate-without-group-id? coordinate)
-        ;;                                                     [(pr-str coordinate)])
-        ;;                                        (string/split (pr-str coordinate) #"\.|\/") [version]))
-        ;; pom-file-name (str (coordinate->package-name (str coordinate)) "-" version ".pom")
-        ]
-    ;; try the canoncial option
-    (if-let [pom (path+pom->pom [base-dir pom-1 ;pom-file-name
-                                 ])]
-      pom
-      ;; There is no file at the canonical path.
-      ;; Example: This is the case for org.clojure/clojure.data.json.
-      ;; One would assume the pom can be found at .../org/clojure/data/json/1.0.0/data.json-1.0.0.pom
-      ;; However, the file is actually found at   .../org/clojure/data.json/1.0.0/data.json-1.0.0.pom
-      (do
-        (println "Cannot find" (string/join "/" [base-dir pom-1]) ". Trying alternative path.")
-        (if-let [pom (path+pom->pom [base-dir pom-2])]
-          pom
-          (println "Cannot find" (string/join "/" [base-dir pom-2]) "at alternative path either. Skipping."))))))
-
-(defn include?
-  "Decide whether or not to include a dependency in the output based on the set
-  actual direct dependencies and a set of ignored artifact ids."
-  [dependency direct-dependencies ignore]
-  (boolean (and (contains? direct-dependencies dependency)
-                (not (contains? ignore dependency)))))
-
-(defn dependencies->paths+poms
-  [base-dir deps direct-dependencies ignore]
+(defn dependencies->poms
+  [deps all-poms ignore]
   (reduce (fn [acc [top-level transitive]]
-            (if (include? (first top-level) direct-dependencies ignore)
+            (if (contains? ignore (first top-level))
+              ;; still check for the children
               (concat acc
-                      [(dependency->path+pom base-dir top-level)]
-                      (dependencies->paths+poms base-dir transitive direct-dependencies ignore))
-              acc))
+                      (dependencies->poms transitive all-poms ignore))
+              (concat acc
+                      [(match-pom top-level all-poms)]
+                      (dependencies->poms transitive all-poms ignore))))
           [] deps))
 
 ;;   What do we want from our dependencies?
@@ -130,24 +83,6 @@
 (s/def ::licenses (s/coll-of ::license))
 (s/def ::bom (s/keys :req-un [::artifact-id ::artifact-version ::licenses ::sources]
                      :opt-in [::group-id]))
-
-(defn licenses-entry?
-  [xml-element]
-  (= :licenses (:tag xml-element)))
-
-(defn get-with-tag [tag content]
-  (->> content
-       (filter (comp (partial = tag) :tag))
-       (first)
-       (:content)))
-
-(defn find-version [content]
-  (if-let [version (first (get-with-tag :version content))]
-    version
-    (->> content
-         (get-with-tag :parent)
-         (get-with-tag :version)
-         (first))))
 
 ;; https://github.com/package-url/purl-spec
 ;; Schema: scheme:type/namespace/name@version?qualifiers#subpath
@@ -175,21 +110,32 @@
   :ret ::purl)
 (defn make-purl
   [group-id artifact-id version]
-  (let [purl-scheme    "pkg"   ; constant according to spec
-        purl-type      "maven" ; constant in our specific case
-        purl-namespace group-id
-        purl-name      artifact-id
-        purl-version   version
+  (let [purl-scheme     "pkg"   ; constant according to spec
+        purl-type       "maven" ; constant in our specific case
+        purl-namespace  group-id
+        purl-name       artifact-id
+        purl-version    version
         purl-qualifiers {}
-        purl-subpath nil]
+        purl-subpath    nil]
     (str purl-scheme ":" purl-type "/" purl-namespace "/" purl-name "@" purl-version)))
+
+(defn repo-url-as-source-url
+  [repo-url]
+  (when repo-url
+    (try
+      (let [split-regex                 #"(/|:|@)"
+            [_ _ _ site group artifact] (->> (string/split repo-url split-regex)
+                                             (filter not-empty))
+            artifact                    (butlast (string/split artifact #"\."))]
+        (str "https://" site "/" group "/" (string/join "." artifact)))
+      (catch Exception _
+        nil))))
 
 (defn pom->bom
   [pom]
   (letfn [(elems->vec [[a b]]
             (let [[a b] (if (= :name (:tag a)) [a b] [b a])]
               [(first (:content a)) (first (:content b))]))]
-
     (let [content               (filter map? (:content pom))
           get-tag-value         (fn [tag content]
                                   (filter (comp (partial = tag) keyword name :tag) content))
@@ -205,30 +151,55 @@
           group-id              (first (get-tag-value-content :groupId content))
           group-id              (or group-id artifact-id)
           project-url           (first (get-tag-value-content :url content))
-          version               (first (get-tag-value-content :version content))]
-      {:origin           "external"
-       :directDependency true
-       :usageType        "COMPONENT_DYNAMIC_LIBRARY"
-       :artifactId       artifact-id
-       ;; NOTE Some package do not specify a group-id. Maven convention tells us
-       ;;      to use the artifact-id in these cases.
-       :namespace        group-id
-       :purl             (make-purl group-id artifact-id version)
-       :sources          {:combined {:absolutePath project-url}} ; TODO
-       :version          version
-       :licenses         {:main [{:name (first (get-tag-value-content :name license))
-                                  :url  (first (get-tag-value-content :url license))}]}
-       :repoUrl          project-url
-       :description      (first (get-tag-value-content :description content))})))
+          version               (first (get-tag-value-content :version content))
+          repo-url              (->> content
+                                     (get-tag-value-content :scm)
+                                     (filter map?)
+                                     (get-tag-value-content :connection)
+                                     first)]
+      (->> {:origin           "external"
+            :directDependency true
+            :usageType        "COMPONENT_DYNAMIC_LIBRARY"
+            :artifactId       artifact-id
+            ;; NOTE Some package do not specify a group-id. Maven convention tells us
+            ;;      to use the artifact-id in these cases.
+            :namespace        group-id
+            :purl             (make-purl group-id artifact-id version)
+            :sources          {:combined
+                               {:absolutePath
+                                (or project-url
+                                    (repo-url-as-source-url repo-url))}}
+            :version          version
+            :licenses         {:main [{:name (first (get-tag-value-content :name license))
+                                       :url  (first (get-tag-value-content :url license))}]}
+            :repoUrl          repo-url
+            :description      (first (get-tag-value-content :description content))}
+           (filter (comp some? second))
+           (into {})))))
+
+(defn collect-all-poms
+  "Returns a set of all files in under `root` that end in .pom."
+  [root]
+  (->> (file-seq (io/file root))
+       (filter (fn [^java.io.File file] (string/ends-with? (.getName file) ".pom")))
+       (mapv (fn [^java.io.File file] (.getPath file)))
+       (into #{})))
+
+(collect-all-poms "/Users/schneider/.m2/repository")
+
+(def ignore-default #{'org.clojure/clojure})
 
 (defn bom
   [project & args]
   ;; Args contains symbols we'd like to ignore
   (let [[local-repo tree]   (make-dependency-tree project)
         direct-dependencies (into #{} (map first (:dependencies project)))
-        ignore              (into #{} (mapv symbol args))
+        ignore              (into ignore-default (mapv symbol args))
         tree                (into {} tree)
-        paths+poms          (dependencies->paths+poms local-repo tree direct-dependencies ignore)]
-    (spit "bom.json" (with-out-str (json/pprint
-                                    {:entries (mapv pom->bom paths+poms)}
-                                    :escape-slash false)))))
+        all-poms            (collect-all-poms local-repo)
+        poms                (->> (dependencies->poms tree all-poms ignore)
+                                 (mapv (comp xml/parse-str slurp)))
+        boms                (-> (mapv pom->bom poms)
+                                (sort-by :artifactId))]
+    (spit "bom.json" (with-out-str (json/pprint {:entries boms} :escape-slash false)))
+    (println "Final package count:" (count boms))))
