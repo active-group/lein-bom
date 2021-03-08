@@ -152,9 +152,10 @@
             :namespace        group-id
             :purl             (make-purl group-id artifact-id version)
             :sources          {:combined
-                               {:absolutePath
-                                (or project-url
-                                    (repo-url-as-source-url repo-url))}}
+                               (let [url (or project-url
+                                             (repo-url-as-source-url repo-url))]
+                                 {:absolutePath url
+                                  :downloadUrl url})}
             :version          version
             :licenses         {:main [{:name (first (get-tag-value-content :name license))
                                        :url  (first (get-tag-value-content :url license))}]}
