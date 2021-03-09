@@ -2,6 +2,8 @@
 
 A Leiningen plugin to collect dependencies in the fantasy format called BOM.
 
+[![Clojars Project](https://img.shields.io/clojars/v/de.active-group/lein-bom.svg)](https://clojars.org/de.active-group/lein-bom)
+
 ## Usage
 
 Check out this repository and, from within the root directory of this project,
