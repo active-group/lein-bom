@@ -26,9 +26,6 @@
             tmp-dir
             (recur (inc num-attempts))))))))
 
-(def repositories {"central" "https://repo1.maven.org/maven2/"
-                   "clojars" "https://clojars.org/repo"})
-
 (defn- make-dependency-tree
   "Fetch all dependencies for the project and put them into a new m2 repository.
   Returns the dependency tree."
@@ -40,7 +37,7 @@
                  (aether/resolve-dependencies
                   :local-repo local-repo
                   :offline? (:offline project)
-                  :repositories repositories
+                  :repositories (into {} (:repositories project))
                   :coordinates (:dependencies project)
                   :transfer-listener :stdout))]))
 
