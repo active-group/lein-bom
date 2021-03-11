@@ -53,18 +53,26 @@
 
 (defn dependencies->poms
   [deps direct-dependencies all-poms ignore]
-  (reduce (fn [acc [top-level transitive]]
-            (if (contains? ignore (first top-level))
-              ;; If we ignore the top-level, ignore it's children as well.
-              acc
-              (concat acc
-                      [[(contains? direct-dependencies (first top-level))
-                        (match-pom top-level all-poms)]]
-                      (dependencies->poms transitive
-                                          direct-dependencies
-                                          all-poms
-                                          ignore))))
-          [] deps))
+  (reduce
+   (fn [acc [top-level transitive]]
+     (let [pom (match-pom top-level all-poms)]
+       (cond
+         (nil? pom)
+         (do
+           (println "ERROR: Could not find pom-file for dependency" (pr-str top-level))
+           acc)  ; We didn't find a pom for this entry.
+
+         (contains? ignore (first top-level))  ; If we ignore the top-level, ignore it's children as well.
+         acc
+
+         :else
+         (concat acc
+                 [[(contains? direct-dependencies (first top-level)) pom]]
+                 (dependencies->poms transitive
+                                     direct-dependencies
+                                     all-poms
+                                     ignore)))))
+   [] deps))
 
 ;; https://github.com/package-url/purl-spec
 ;; Schema: scheme:type/namespace/name@version?qualifiers#subpath
@@ -181,7 +189,12 @@
         all-poms            (collect-all-poms local-repo)
         poms                (->> (dependencies->poms tree direct-dependencies all-poms ignore)
                                  (mapv (fn [[direct-dependency? pom]]
-                                         [direct-dependency? (-> pom slurp xml/parse-str)])))
+                                         (try
+                                           [direct-dependency? (-> pom slurp xml/parse-str)]
+                                           (catch Exception e
+                                             (println (str "ERROR reading " (pr-str pom) ":") (.getMessage e))))
+                                         ))
+                                 (filter some?))
         boms                (->> (mapv pom->bom poms)
                                  (sort-by :artifactId))]
     (spit "bom.json" (with-out-str (json/pprint {:entries boms} :escape-slash false)))
