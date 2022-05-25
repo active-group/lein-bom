@@ -11,7 +11,14 @@ run:
 
     $ lein install
 
-Then, in the project you want to generate a BOM for, run:
+Then put the following into the `project.clj` file of the project you
+want to generate a BOM for
+
+```clojure
+  :plugins [[de.active-group/lein-bom "0.2.4"]]
+```
+
+and then run, also in that project's root dir:
 
     $ lein bom
 
