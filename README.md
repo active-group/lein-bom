@@ -29,19 +29,19 @@ Example: If you want to ignore `org.clojure/clojure` and
 
     $ lein bom org.clojure/clojure org.clojure/clojurescript
 
-This will hopefully generate `bom.json` -- this file contains the bom entries
-for this project.
-Only dependencies that are specified in the project's `project.clj` under
-`:dependencies` will be included.
+This will hopefully generate `bom.json` -- this file contains the bom
+entries for this project.  Dependencies that are specified in
+`project.clj` under `:dependencies` will be included, but please read
+the following note carefully.
 
 ### Note on `profiles.clj`
 
-The `leiningen` internals always include everything specified in your
-`profiles.clj` (on MacOS and probably Linux, this is found under
-`~/.lein/profiles.cljs`) under `:dependencies`.
-If you want to have the pure output from this tool, you need to temporarily
-remove all `:dependencies` from our `profiles.clj`.
-In the future, perhaps we will find a way around this.
+The `leiningen` internals always merge everything specified in the
+`:dependencies` in your `profiles.clj` (located at
+`~/.lein/profiles.clj` on non-Windows).  If you need the project's
+dependencies *without* your personal ones you need to temporarily
+remove them from your `profiles.clj`.  In the future, perhaps we will
+find a way around this.
 
 ## License
 
