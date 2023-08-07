@@ -62,7 +62,7 @@
            (println "ERROR: Could not find pom-file for dependency" (pr-str top-level))
            acc)  ; We didn't find a pom for this entry.
 
-         (contains? ignore (first top-level))  ; If we ignore the top-level, ignore it's children as well.
+         (contains? ignore (first top-level))  ; If we ignore the top-level, ignore its children as well.
          acc
 
          :else
