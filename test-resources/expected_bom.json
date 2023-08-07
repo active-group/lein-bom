@@ -1,0 +1,417 @@
+{"entries":
+ [{"description":
+   "\n     The Apache Commons Codec package contains simple encoder and decoders for\n     various formats such as Base64 and Hexadecimal.  In addition to these\n     widely used encoders and decoders, the codec package also maintains a\n     collection of phonetic encoding utilities.\n  ",
+   "sources":
+   {"combined":
+    {"absolutePath":"http://commons.apache.org/proper/commons-codec/",
+     "downloadUrl":
+     "http://commons.apache.org/proper/commons-codec/"}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/commons-codec/commons-codec@1.11",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"commons-codec",
+   "origin":"external",
+   "repoUrl":
+   "scm:svn:http://svn.apache.org/repos/asf/commons/proper/codec/trunk",
+   "version":"1.11",
+   "namespace":"commons-codec",
+   "directDependency":false},
+  {"description":
+   "\nThe Apache Commons IO library contains utility classes, stream implementations, file filters,\nfile comparators, endian transformation classes, and much more.\n  ",
+   "sources":
+   {"combined":
+    {"absolutePath":"http://commons.apache.org/proper/commons-io/",
+     "downloadUrl":"http://commons.apache.org/proper/commons-io/"}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/commons-io/commons-io@2.6",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"commons-io",
+   "origin":"external",
+   "repoUrl":
+   "scm:git:http://git-wip-us.apache.org/repos/asf/commons-io.git",
+   "version":"2.6",
+   "namespace":"commons-io",
+   "directDependency":false},
+  {"description":
+   "\n  Apache Commons Lang, a package of Java utility classes for the\n  classes that are in java.lang's hierarchy, or are considered to be so\n  standard as to justify existence in java.lang.\n  ",
+   "sources":
+   {"combined":
+    {"absolutePath":"http://commons.apache.org/proper/commons-lang/",
+     "downloadUrl":"http://commons.apache.org/proper/commons-lang/"}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/commons-lang3/commons-lang3@3.8.1",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"commons-lang3",
+   "origin":"external",
+   "repoUrl":
+   "scm:git:http://git-wip-us.apache.org/repos/asf/commons-lang.git",
+   "version":"3.8.1",
+   "namespace":"commons-lang3",
+   "directDependency":false},
+  {"description":
+   "Apache Commons Logging is a thin adapter allowing configurable bridging to other,\n    well known logging systems.",
+   "sources":
+   {"combined":
+    {"absolutePath":
+     "http://commons.apache.org/proper/commons-logging/",
+     "downloadUrl":
+     "http://commons.apache.org/proper/commons-logging/"}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/commons-logging/commons-logging@1.2",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"commons-logging",
+   "origin":"external",
+   "repoUrl":
+   "scm:svn:http://svn.apache.org/repos/asf/commons/proper/logging/trunk",
+   "version":"1.2",
+   "namespace":"commons-logging",
+   "directDependency":false},
+  {"description":
+   "Functions to parse XML into lazy sequences and lazy trees and emit these as text",
+   "sources":
+   {"combined":
+    {"absolutePath":"https://github.com/clojure/data.xml",
+     "downloadUrl":"https://github.com/clojure/data.xml"}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/data.xml/data.xml@0.0.8",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"data.xml",
+   "origin":"external",
+   "repoUrl":"scm:git:git@github.com:clojure/data.xml.git",
+   "version":"0.0.8",
+   "namespace":"data.xml",
+   "directDependency":true},
+  {"description":
+   "An abstraction for modifiable/readable class loaders.",
+   "sources":
+   {"combined":
+    {"absolutePath":"https://github.com/tobias/dynapath",
+     "downloadUrl":"https://github.com/tobias/dynapath"}},
+   "licenses":
+   {"main":
+    [{"name":"Eclipse Public License",
+      "url":"http://www.eclipse.org/legal/epl-v10.html"}]},
+   "purl":"pkg:maven/org.tcrawley/dynapath@1.0.0",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"dynapath",
+   "origin":"external",
+   "repoUrl":"scm:git:git://github.com/tobias/dynapath.git",
+   "version":"1.0.0",
+   "namespace":"org.tcrawley",
+   "directDependency":false},
+  {"description":"\n   Apache HttpComponents Client\n  ",
+   "sources":
+   {"combined":
+    {"absolutePath":"http://hc.apache.org/httpcomponents-client",
+     "downloadUrl":"http://hc.apache.org/httpcomponents-client"}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/httpclient/httpclient@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"httpclient",
+   "origin":"external",
+   "namespace":"httpclient",
+   "directDependency":false},
+  {"description":"\n   Apache HttpComponents Core (blocking I/O)\n  ",
+   "sources":
+   {"combined":
+    {"absolutePath":"http://hc.apache.org/httpcomponents-core-ga",
+     "downloadUrl":"http://hc.apache.org/httpcomponents-core-ga"}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/httpcore/httpcore@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"httpcore",
+   "origin":"external",
+   "namespace":"httpcore",
+   "directDependency":false},
+  {"description":"The javax.inject API",
+   "sources":
+   {"combined":
+    {"absolutePath":"http://code.google.com/p/atinject/",
+     "downloadUrl":"http://code.google.com/p/atinject/"}},
+   "licenses":
+   {"main":
+    [{"name":"The Apache Software License, Version 2.0",
+      "url":"http://www.apache.org/licenses/LICENSE-2.0.txt"}]},
+   "purl":"pkg:maven/javax.inject/javax.inject@1",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"javax.inject",
+   "origin":"external",
+   "version":"1",
+   "namespace":"javax.inject",
+   "directDependency":false},
+  {"description":"JCL 1.2 implemented over SLF4J",
+   "sources":
+   {"combined":
+    {"absolutePath":"http://www.slf4j.org",
+     "downloadUrl":"http://www.slf4j.org"}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/jcl-over-slf4j/jcl-over-slf4j@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"jcl-over-slf4j",
+   "origin":"external",
+   "namespace":"jcl-over-slf4j",
+   "directDependency":false},
+  {"description":
+   "jsoup is a Java library for working with real-world HTML. It provides a very convenient API for extracting and manipulating data, using the best of DOM, CSS, and jquery-like methods. jsoup implements the WHATWG HTML5 specification, and parses HTML to the same DOM as modern browsers do.",
+   "sources":
+   {"combined":
+    {"absolutePath":"https://jsoup.org/",
+     "downloadUrl":"https://jsoup.org/"}},
+   "licenses":
+   {"main":
+    [{"name":"The MIT License", "url":"https://jsoup.org/license"}]},
+   "purl":"pkg:maven/org.jsoup/jsoup@1.11.3",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"jsoup",
+   "origin":"external",
+   "repoUrl":"scm:git:https://github.com/jhy/jsoup.git",
+   "version":"1.11.3",
+   "namespace":"org.jsoup",
+   "directDependency":false},
+  {"sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/maven-artifact/maven-artifact@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-artifact",
+   "origin":"external",
+   "namespace":"maven-artifact",
+   "directDependency":false},
+  {"description":
+   "Support for descriptor builders (model, setting, toolchains)",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/maven-builder-support/maven-builder-support@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-builder-support",
+   "origin":"external",
+   "namespace":"maven-builder-support",
+   "directDependency":false},
+  {"description":"Model for Maven POM (Project Object Model)",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/maven-model/maven-model@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-model",
+   "origin":"external",
+   "namespace":"maven-model",
+   "directDependency":false},
+  {"description":
+   "The effective model builder, with inheritance, profile activation, interpolation, ...",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/maven-model-builder/maven-model-builder@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-model-builder",
+   "origin":"external",
+   "namespace":"maven-model-builder",
+   "directDependency":false},
+  {"description":
+   "Per-directory local and remote repository metadata.",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":
+   "pkg:maven/maven-repository-metadata/maven-repository-metadata@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-repository-metadata",
+   "origin":"external",
+   "namespace":"maven-repository-metadata",
+   "directDependency":false},
+  {"description":
+   "\n    The application programming interface for the repository system.\n  ",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/maven-resolver-api/maven-resolver-api@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-resolver-api",
+   "origin":"external",
+   "namespace":"maven-resolver-api",
+   "directDependency":false},
+  {"description":
+   "\n      A repository connector implementation for repositories using URI-based layouts.\n  ",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":
+   "pkg:maven/maven-resolver-connector-basic/maven-resolver-connector-basic@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-resolver-connector-basic",
+   "origin":"external",
+   "namespace":"maven-resolver-connector-basic",
+   "directDependency":false},
+  {"description":
+   "\n    An implementation of the repository system.\n  ",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/maven-resolver-impl/maven-resolver-impl@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-resolver-impl",
+   "origin":"external",
+   "namespace":"maven-resolver-impl",
+   "directDependency":false},
+  {"description":
+   "Extensions to Maven Resolver for utilizing Maven POM and repository metadata.",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":
+   "pkg:maven/maven-resolver-provider/maven-resolver-provider@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-resolver-provider",
+   "origin":"external",
+   "namespace":"maven-resolver-provider",
+   "directDependency":false},
+  {"description":
+   "\n    The service provider interface for repository system implementations and repository connectors.\n  ",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/maven-resolver-spi/maven-resolver-spi@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-resolver-spi",
+   "origin":"external",
+   "namespace":"maven-resolver-spi",
+   "directDependency":false},
+  {"description":
+   "\n      A transport implementation for repositories using file:// URLs.\n  ",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":
+   "pkg:maven/maven-resolver-transport-file/maven-resolver-transport-file@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-resolver-transport-file",
+   "origin":"external",
+   "namespace":"maven-resolver-transport-file",
+   "directDependency":false},
+  {"description":
+   "\n      A transport implementation for repositories using http:// and https:// URLs.\n  ",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":
+   "pkg:maven/maven-resolver-transport-http/maven-resolver-transport-http@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-resolver-transport-http",
+   "origin":"external",
+   "namespace":"maven-resolver-transport-http",
+   "directDependency":false},
+  {"description":
+   "\n    A transport implementation based on Maven Wagon.\n  ",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":
+   "pkg:maven/maven-resolver-transport-wagon/maven-resolver-transport-wagon@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-resolver-transport-wagon",
+   "origin":"external",
+   "namespace":"maven-resolver-transport-wagon",
+   "directDependency":false},
+  {"description":
+   "\n    A collection of utility classes to ease usage of the repository system.\n  ",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/maven-resolver-util/maven-resolver-util@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"maven-resolver-util",
+   "origin":"external",
+   "namespace":"maven-resolver-util",
+   "directDependency":false},
+  {"description":
+   "\n    Plexus Component \"Java 5\" Annotations, to describe plexus components properties in java sources with\n    standard annotations instead of javadoc annotations.\n  ",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":
+   "pkg:maven/plexus-component-annotations/plexus-component-annotations@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"plexus-component-annotations",
+   "origin":"external",
+   "namespace":"plexus-component-annotations",
+   "directDependency":false},
+  {"sources":
+   {"combined":
+    {"absolutePath":
+     "https://github.com/codehaus-plexus/plexus-interpolation",
+     "downloadUrl":
+     "https://github.com/codehaus-plexus/plexus-interpolation"}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/plexus-interpolation/plexus-interpolation@1.25",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"plexus-interpolation",
+   "origin":"external",
+   "repoUrl":
+   "scm:git:git@github.com:codehaus-plexus/plexus-interpolation.git",
+   "version":"1.25",
+   "namespace":"plexus-interpolation",
+   "directDependency":false},
+  {"description":
+   "A collection of various utility classes to ease working with strings, files, command lines, XML and\n    more.\n  ",
+   "sources":
+   {"combined":
+    {"absolutePath":"https://github.com/codehaus-plexus/plexus-utils",
+     "downloadUrl":
+     "https://github.com/codehaus-plexus/plexus-utils"}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/plexus-utils/plexus-utils@3.2.0",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"plexus-utils",
+   "origin":"external",
+   "repoUrl":
+   "scm:git:git@github.com:codehaus-plexus/plexus-utils.git",
+   "version":"3.2.0",
+   "namespace":"plexus-utils",
+   "directDependency":false},
+  {"description":
+   "Pomegranate is a library that provides a sane Clojure API for Maven-resolver",
+   "sources":
+   {"combined":
+    {"absolutePath":"https://github.com/clj-commons/pomegranate",
+     "downloadUrl":"https://github.com/clj-commons/pomegranate"}},
+   "licenses":
+   {"main":
+    [{"name":"Eclipse Public License",
+      "url":"http://www.eclipse.org/legal/epl-v10.html"}]},
+   "purl":"pkg:maven/clj-commons/pomegranate@1.2.0",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"pomegranate",
+   "origin":"external",
+   "repoUrl":"scm:git:git://github.com:clj-commons/pomegranate.git",
+   "version":"1.2.0",
+   "namespace":"clj-commons",
+   "directDependency":true},
+  {"description":"The slf4j API",
+   "sources":
+   {"combined":
+    {"absolutePath":"http://www.slf4j.org",
+     "downloadUrl":"http://www.slf4j.org"}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/slf4j-api/slf4j-api@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"slf4j-api",
+   "origin":"external",
+   "namespace":"slf4j-api",
+   "directDependency":false},
+  {"description":
+   "\n    Wagon provider that gets and puts artifacts through HTTP(S) using Apache HttpClient-4.x.\n  ",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/wagon-http/wagon-http@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"wagon-http",
+   "origin":"external",
+   "namespace":"wagon-http",
+   "directDependency":false},
+  {"description":
+   "\n    Shared Library for wagon providers supporting HTTP.\n  ",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/wagon-http-shared/wagon-http-shared@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"wagon-http-shared",
+   "origin":"external",
+   "namespace":"wagon-http-shared",
+   "directDependency":false},
+  {"description":
+   "Maven Wagon API that defines the contract between different Wagon implementations",
+   "sources":{"combined":{"absolutePath":null, "downloadUrl":null}},
+   "licenses":{"main":[{"name":null, "url":null}]},
+   "purl":"pkg:maven/wagon-provider-api/wagon-provider-api@",
+   "usageType":"COMPONENT_DYNAMIC_LIBRARY",
+   "artifactId":"wagon-provider-api",
+   "origin":"external",
+   "namespace":"wagon-provider-api",
+   "directDependency":false}]}

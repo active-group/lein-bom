@@ -1,16 +1,10 @@
 (ns leiningen.bom-test
   (:require [clojure.test :refer :all]
+            [clojure.data.json :as json]
+            [clojure.data.xml :as xml]
+            [clojure.pprint :as pprint]
+            [clojure.java.io :as io]
             [leiningen.bom :as bom]))
-
-;; The test tree (deps for this project)
-(def tree {['clj-commons/pomegranate "1.2.0"]
-           {['org.apache.httpcomponents/httpclient "4.5.8"]
-            {['commons-codec "1.11"] nil
-             ['commons-logging "1.2"] nil},
-            ['org.apache.httpcomponents/httpcore "4.4.11"] nil,
-            ['org.apache.maven/maven-resolver-provider "3.6.1"]
-            {['javax.inject "1"] nil,
-             ['org.apache.maven/maven-model-builder "3.6.1"] nil}}})
 
 (deftest test-dep->pom-name
   (testing "just name and version"
@@ -19,3 +13,34 @@
   (testing "ignores superfluous args"
     (is (= "pomegranate-1.2.0.pom"
            (bom/dep->pom-name ["pomegranate" "1.2.0" "MORE" "ARGS" 12345])))))
+
+(defn clean-up-golden-test-file [f]
+  (try (f)
+       (finally
+         (io/delete-file bom/output-file-name true))))
+
+(use-fixtures :each clean-up-golden-test-file)
+(deftest test-golden
+  (testing "produces expected output"
+    (is (= (slurp "test-resources/expected_bom.json")
+           (let [deps [['clj-commons/pomegranate "1.2.0"]
+                       ['org.clojure/data.xml "0.0.8"]]
+                 [local-repo tree]
+                 (bom/make-dependency-tree deps
+                                           {"clojars" "https://repo.clojars.org"
+                                            "maven" "https://repo1.maven.org/maven2"}
+                                           false)
+                 direct-dependencies (into #{} (map first deps))
+                 tree (into {} tree)
+                 all-poms (bom/collect-all-poms local-repo)
+                 poms (->> (bom/dependencies->poms tree direct-dependencies all-poms bom/ignore-default)
+                           (mapv (fn [[direct-dependency? pom]]
+                                   (try
+                                     [direct-dependency? (-> pom slurp xml/parse-str)]
+                                     (catch Exception e
+                                       (println (str "ERROR reading " (pr-str pom) ":") (.getMessage e))))))
+                           (filter some?))
+                 boms (->> (mapv bom/pom->bom poms)
+                           (sort-by :artifactId))]
+             (spit bom/output-file-name (with-out-str (json/pprint {:entries boms} :escape-slash false)))
+             (slurp bom/output-file-name))))))

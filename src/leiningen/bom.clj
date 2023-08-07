@@ -26,19 +26,19 @@
             tmp-dir
             (recur (inc num-attempts))))))))
 
-(defn- make-dependency-tree
+(defn make-dependency-tree
   "Fetch all dependencies for the project and put them into a new m2 repository.
   Returns the dependency tree."
-  [project]
+  [deps repos offline?]
   ;; Source: https://github.com/joodie/lein-deps-tree/blob/master/src/leiningen/deps_tree.clj
   (let [local-repo (mk-tmp-dir!)]
     [local-repo (aether/dependency-hierarchy
-                 (:dependencies project)
+                 deps
                  (aether/resolve-dependencies
                   :local-repo local-repo
-                  :offline? (:offline project)
-                  :repositories (into {} (:repositories project))
-                  :coordinates (:dependencies project)
+                  :offline? offline?
+                  :repositories (into {} repos)
+                  :coordinates deps
                   :transfer-listener :stdout))]))
 
 (defn dep->pom-name
@@ -179,23 +179,27 @@
 
 (def ignore-default #{'org.clojure/clojure})
 
+(def output-file-name "bom.json")
+
 (defn bom
   [project & args]
   ;; Args contains symbols we'd like to ignore
-  (let [[local-repo tree]   (make-dependency-tree project)
+  (let [[local-repo tree] (make-dependency-tree
+                           (:dependencies project)
+                           (:repositories project)
+                           (:offline? project))
         direct-dependencies (into #{} (map first (:dependencies project)))
-        ignore              (into ignore-default (mapv symbol args))
-        tree                (into {} tree)
-        all-poms            (collect-all-poms local-repo)
-        poms                (->> (dependencies->poms tree direct-dependencies all-poms ignore)
-                                 (mapv (fn [[direct-dependency? pom]]
-                                         (try
-                                           [direct-dependency? (-> pom slurp xml/parse-str)]
-                                           (catch Exception e
-                                             (println (str "ERROR reading " (pr-str pom) ":") (.getMessage e))))
-                                         ))
-                                 (filter some?))
-        boms                (->> (mapv pom->bom poms)
-                                 (sort-by :artifactId))]
-    (spit "bom.json" (with-out-str (json/pprint {:entries boms} :escape-slash false)))
+        ignore (into ignore-default (mapv symbol args))
+        tree (into {} tree)
+        all-poms (collect-all-poms local-repo)
+        poms (->> (dependencies->poms tree direct-dependencies all-poms ignore)
+                  (mapv (fn [[direct-dependency? pom]]
+                          (try
+                            [direct-dependency? (-> pom slurp xml/parse-str)]
+                            (catch Exception e
+                              (println (str "ERROR reading " (pr-str pom) ":") (.getMessage e))))))
+                  (filter some?))
+        boms (->> (mapv pom->bom poms)
+                  (sort-by :artifactId))]
+    (spit output-file-name (with-out-str (json/pprint {:entries boms} :escape-slash false)))
     (println "Final package count:" (count boms))))
