@@ -9,25 +9,31 @@ A Leiningen plugin to collect dependencies in the fantasy format called BOM.
 Check out this repository and, from within the root directory of this project,
 run:
 
-    $ lein install
+```shell
+lein install
+```
 
 Then put the following into the `project.clj` file of the project you
 want to generate a BOM for
 
 ```clojure
-  :plugins [[de.active-group/lein-bom "0.2.4"]]
+:plugins [[de.active-group/lein-bom "0.2.4"]]
 ```
 
 and then run, also in that project's root dir:
 
-    $ lein bom
+```shell
+lein bom
+```
 
 If you want to explicitly ignore some dependencies, you can specify them as
 arguments after the call to lein bom.
 Example: If you want to ignore `org.clojure/clojure` and
 `org.clojure/clojurescript` in the output, run
 
-    $ lein bom org.clojure/clojure org.clojure/clojurescript
+```shell
+lein bom org.clojure/clojure org.clojure/clojurescript
+```
 
 This will hopefully generate `bom.json` -- this file contains the bom
 entries for this project.  Dependencies that are specified in
